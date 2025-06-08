@@ -1,11 +1,10 @@
---- START OF FILE BulletTime.html ---
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bullet Time WebGL Game</title>
+    <title>Bullet Time Game Prototype</title>
+	<link rel="icon" href="favicon.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Condensed:wght@300;400&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
@@ -21,15 +20,15 @@
         #gameOverScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); display: none; flex-direction: column; justify-content: center; align-items: center; color: #fff; font-family: 'Press Start 2P', cursive; z-index: 100; text-align: center; }
         #gameOverText { font-size: clamp(2em, 10vw, 5em); margin-bottom: 50px; color: #ff3333; text-shadow: 0 0 8px #ff0000; }
         #gameOverText .char { display: inline-block; position: relative; }
-        /* ADDED STYLES FOR FINAL KILL COUNT */
+        
         #finalKillCountText {
             font-family: 'Press Start 2P', cursive;
             font-size: clamp(1.2em, 6vw, 2.2em);
-            color: #ffdb4d; /* Gold-ish yellow */
+            color: #ffdb4d; 
             margin-bottom: 40px;
             text-shadow: 0 0 6px #ccA500;
             opacity: 0;
-            transform: scale(0.8); /* Initial state for GSAP animation */
+            transform: scale(0.8); 
         }
         #retryButton { font-family: 'Press Start 2P', cursive; font-size: clamp(1em, 4vw, 1.5em); padding: 15px 30px; background-color: #fff; color: #111; border: 3px solid #555; cursor: pointer; border-radius: 0px; box-shadow: 5px 5px 0px #555; transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s; opacity: 0; }
         #retryButton:hover { background-color: #ffcc00; color: #000; box-shadow: 3px 3px 0px #cc9900; transform: translate(2px, 2px); }
@@ -67,7 +66,7 @@
 
         // --- State Variables
         let scene, camera, renderer, controls, composer; let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, canJump = false; let velocity = new THREE.Vector3(); let direction = new THREE.Vector3(); let clock = new THREE.Clock(); let targets = []; let projectiles = []; let originalTargetMaterial; let perlinFloorMaterial; let stars; let crosshairElement; let playerBody; let cameraTargetProjectile = null; let targetFOV = PLAYER_FOV; let mouseDeltaX = 0; let mouseDeltaY = 0; let isGameOver = false; let isPaused = true; let attackingTargets = []; let lastAttackerSelectionTime = 0;
-        let blocker, instructionsElement, gameOverScreenElement, gameOverTextElement, retryButtonElement, finalKillCountTextElement; // ADDED finalKillCountTextElement
+        let blocker, instructionsElement, gameOverScreenElement, gameOverTextElement, retryButtonElement, finalKillCountTextElement; 
         let killCounterElement, killCountDisplay, killCount = 0, killCountObject = { score: 0 };
 
         // --- Target Shader 
@@ -76,7 +75,7 @@
             precision highp float;
             uniform float time;
             uniform vec3 baseColor;
-            uniform float flashOverrideFactor; // ADDED: 0.0 for normal, 1.0 for flash override
+            uniform float flashOverrideFactor; 
             varying vec2 vUv;
             varying vec3 vNormal;
             varying vec3 vWorldPosition;
@@ -99,15 +98,13 @@
                     sin(pattern*5.0+time*1.2+4.0)*0.5+0.5
                 );
 
-                // MODIFIED: Mix factor depends on flashOverrideFactor
-                // When flashOverrideFactor = 0.0 (normal), mixFactor = 0.8
-                // When flashOverrideFactor = 1.0 (flash), mixFactor = 0.0 (making output = baseColor)
+                
                 float mixFactor = mix(0.8, 0.0, flashOverrideFactor);
                 vec3 mixedColor = mix(baseColor, psychedelicColor, mixFactor);
 
                 float lighting=dot(normalize(vNormal),normalize(vec3(0.5,0.7,1.0)))*0.3+0.7;
                 lighting=clamp(lighting,0.0,1.0);
-                mixedColor *= lighting; // Apply lighting
+                mixedColor *= lighting; 
 
                 gl_FragColor=vec4(mixedColor,1.0);
             }
@@ -140,7 +137,7 @@
 
         function init() {
             crosshairElement = document.getElementById('crosshair'); blocker = document.getElementById('blocker'); instructionsElement = document.getElementById('instructions'); gameOverScreenElement = document.getElementById('gameOverScreen'); gameOverTextElement = document.getElementById('gameOverText'); retryButtonElement = document.getElementById('retryButton');
-            finalKillCountTextElement = document.getElementById('finalKillCountText'); // ADDED
+            finalKillCountTextElement = document.getElementById('finalKillCountText'); 
             killCounterElement = document.getElementById('killCounter'); killCountDisplay = document.getElementById('killCountDisplay');
             gsap.set(killCounterElement, {opacity: 0, y: -20}); animateInstructions(instructionsElement);
 
@@ -175,9 +172,9 @@
             const floorGeometry=new THREE.PlaneGeometry(5000,5000,1,1); floorGeometry.rotateX(-Math.PI/2); const floor=new THREE.Mesh(floorGeometry,perlinFloorMaterial); scene.add(floor);
             spawnTargets();
             const starGeometry=new THREE.BufferGeometry();const starVertices=[];const starPhases=[];const starSizes=[];
-            const starCount=4500; // MODIFIED: Halved the star count from 9000
-            const starMinRadius=160; // MODIFIED: Increased min radius from 80
-            const starMaxRadius=440; // MODIFIED: Increased max radius from 220
+            const starCount=4500; 
+            const starMinRadius=160; 
+            const starMaxRadius=440; 
             for(let i=0;i<starCount;i++){const u=Math.random();const v=Math.random();const randTheta=2*Math.PI*u;const randPhi=Math.acos(2*v-1);const randRadius=THREE.MathUtils.randFloat(starMinRadius,starMaxRadius);const x=randRadius*Math.sin(randPhi)*Math.cos(randTheta);const y=randRadius*Math.sin(randPhi)*Math.sin(randTheta);const z=randRadius*Math.cos(randPhi);starVertices.push(x,y,z);starPhases.push(Math.random()*Math.PI*2);starSizes.push(Math.random()*1.5+1.0);}starGeometry.setAttribute('position',new THREE.Float32BufferAttribute(starVertices,3));starGeometry.setAttribute('phase',new THREE.Float32BufferAttribute(starPhases,1));starGeometry.setAttribute('size',new THREE.Float32BufferAttribute(starSizes,1));const starMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0.0},color:{value:new THREE.Color(0xffffff)}},vertexShader:starVertexShader,fragmentShader:starFragmentShader,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false});stars=new THREE.Points(starGeometry,starMaterial);scene.add(stars);
             const ambientLight=new THREE.AmbientLight(0x606060);scene.add(ambientLight);const directionalLight=new THREE.DirectionalLight(0xffffff,0.3);directionalLight.position.set(1,1,1);scene.add(directionalLight);
             composer=new EffectComposer(renderer);const renderPass=new RenderPass(scene,camera);composer.addPass(renderPass);const vhsPass=new ShaderPass(VHSShader);vhsPass.renderToScreen=true;composer.addPass(vhsPass);
@@ -212,7 +209,7 @@
                 g.computeBoundingSphere(); t.userData.boundingRadius=g.boundingSphere.radius * baseScale; scene.add(t); targets.push(t); 
             } 
         }
-        function selectAttackers(time) { if (isGameOver || isPaused) return; if (time - lastAttackerSelectionTime < ATTACKER_SELECTION_INTERVAL / 1000) return; lastAttackerSelectionTime = time; attackingTargets = attackingTargets.filter(attacker => attacker.parent === scene && !attacker.userData.isDying); const potentialAttackers = targets.filter(t => t.parent === scene && !t.userData.isAttacking && !t.userData.isDying); while (attackingTargets.length < MAX_ATTACKERS && potentialAttackers.length > 0) { const randomIndex = Math.floor(Math.random() * potentialAttackers.length); const newAttacker = potentialAttackers.splice(randomIndex, 1)[0]; newAttacker.userData.isAttacking = true; newAttacker.userData.kamikazeSpeed = BASE_ATTACKER_SPEED * THREE.MathUtils.randFloat(1.0, 3.0); attackingTargets.push(newAttacker); if (newAttacker.material.uniforms.baseColor) { newAttacker.material.uniforms.baseColor.value.setHex(0xff0000); newAttacker.material.uniforms.flashOverrideFactor.value = 0.0; } } } // ensure flash override is off for attackers
+        function selectAttackers(time) { if (isGameOver || isPaused) return; if (time - lastAttackerSelectionTime < ATTACKER_SELECTION_INTERVAL / 1000) return; lastAttackerSelectionTime = time; attackingTargets = attackingTargets.filter(attacker => attacker.parent === scene && !attacker.userData.isDying); const potentialAttackers = targets.filter(t => t.parent === scene && !t.userData.isAttacking && !t.userData.isDying); while (attackingTargets.length < MAX_ATTACKERS && potentialAttackers.length > 0) { const randomIndex = Math.floor(Math.random() * potentialAttackers.length); const newAttacker = potentialAttackers.splice(randomIndex, 1)[0]; newAttacker.userData.isAttacking = true; newAttacker.userData.kamikazeSpeed = BASE_ATTACKER_SPEED * THREE.MathUtils.randFloat(1.0, 3.0); attackingTargets.push(newAttacker); if (newAttacker.material.uniforms.baseColor) { newAttacker.material.uniforms.baseColor.value.setHex(0xff0000); newAttacker.material.uniforms.flashOverrideFactor.value = 0.0; } } } 
         function onDocumentMouseMove(event) { if(cameraTargetProjectile!==null && !isPaused && !isGameOver){mouseDeltaX+=event.movementX||0;mouseDeltaY+=event.movementY||0;} }
         function onKeyDown(event) { if(isGameOver || isPaused || !controls.isLocked) return; switch(event.code){case'ArrowUp':case'KeyW':moveForward=true;break;case'ArrowLeft':case'KeyA':moveLeft=true;break;case'ArrowDown':case'KeyS':moveBackward=true;break;case'ArrowRight':case'KeyD':moveRight=true;break;case'Space':if(canJump)velocity.y+=80;canJump=false;break;}}
         function onKeyUp(event) { switch(event.code){case'ArrowUp':case'KeyW':moveForward=false;break;case'ArrowLeft':case'KeyA':moveLeft=false;break;case'ArrowDown':case'KeyS':moveBackward=false;break;case'ArrowRight':case'KeyD':moveRight=false;break;}}
@@ -357,12 +354,12 @@
             const gameOverMessage = "GAME OVER";
             gameOverTextElement.innerHTML = gameOverMessage.split("").map(char => `<span class="char">${char === ' ' ? '&nbsp;' : char}</span>`).join("");
 
-            // ADDED for Final Kill Count
+            
             finalKillCountTextElement.textContent = `KILLS: ${killCount}`;
-            gsap.set(finalKillCountTextElement, { opacity: 0, scale: 0.8 }); // Initial state for animation
+            gsap.set(finalKillCountTextElement, { opacity: 0, scale: 0.8 }); 
 
             gsap.killTweensOf("#gameOverText .char");
-            gsap.killTweensOf(finalKillCountTextElement); // ADDED
+            gsap.killTweensOf(finalKillCountTextElement); 
             gsap.killTweensOf("#retryButton");
 
             gsap.fromTo("#gameOverText .char",
@@ -370,13 +367,13 @@
                 { y: 0, opacity: 1, rotation: 0, stagger: 0.08, duration: 0.6, ease: "elastic.out(1, 0.6)", delay: 0.1 }
             );
 
-            // ADDED Animation for Final Kill Count
+            
             gsap.to(finalKillCountTextElement, {
                 opacity: 1,
                 scale: 1,
                 duration: 0.5,
                 ease: "power2.out",
-                delay: gameOverMessage.length * 0.08 + 0.4 // Appears after "GAME OVER" text animation starts settling
+                delay: gameOverMessage.length * 0.08 + 0.4 
             });
 
             gsap.to("#retryButton", {
@@ -384,7 +381,7 @@
                 scale: 1,
                 duration: 0.5,
                 ease: "power2.out",
-                delay: gameOverMessage.length * 0.08 + 0.7 // Delayed slightly more to appear after kill count
+                delay: gameOverMessage.length * 0.08 + 0.7 
             });
         }
 
@@ -394,8 +391,8 @@
             gameOverScreenElement.style.display = 'none';
 
             gsap.set("#retryButton", { opacity: 0, scale: 0.8 });
-            gsap.set(finalKillCountTextElement, { opacity: 0, scale: 0.8 }); // ADDED reset for kill count text
-            finalKillCountTextElement.textContent = ''; // ADDED clear text
+            gsap.set(finalKillCountTextElement, { opacity: 0, scale: 0.8 }); 
+            finalKillCountTextElement.textContent = ''; 
 
             projectiles.forEach(p => { if (p.parent) scene.remove(p); if (p.geometry) p.geometry.dispose(); }); projectiles = [];
             spawnTargets();
