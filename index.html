@@ -365,16 +365,6 @@
             aspect-ratio: 16 / 9; border: none; 
         }
 
-       
-        .project-video-container.statues-video {
-            background-color: transparent;
-        }
-        .project-video-container.statues-video video {
-             aspect-ratio: auto;
-             object-fit: contain;
-             max-height: 28.125rem;
-        }
-
         
         .project-video-container.bullet-time-video {
             background-color: transparent; 
@@ -383,19 +373,6 @@
             object-fit: cover; 
         }
 
-        .project-placeholder {
-            padding: 2.5rem 1.25rem;
-            text-align: center;
-            border: 2px dashed var(--accent-color-4); background-color: rgba(0,0,0,0.2);
-            min-height: 12.5rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .project-placeholder p {
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif;
-            color: var(--accent-color-1); opacity: 0.8;
-            margin-bottom: 0;
-            font-weight: 500;
-        }
 
         .download-apk-button { 
             display: inline-block;
@@ -601,12 +578,7 @@
             <div class="projects-grid">
                 <div class="project-card">
                     <h3>Statues</h3>
-                    <div class="project-video-container statues-video">
-                        <video controls preload="metadata" poster="images/statues_poster.jpg">
-                            <source src="images/statues.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
+                    <div style="padding:140% 0 0 0;position:relative;margin-bottom: 1.25rem;border-radius: 0.5rem; overflow: hidden;"><iframe src="https://player.vimeo.com/video/1072473115?h=4a53bf3607&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Statues Crash Game Trailer"></iframe></div>
                     <p>Statues - Яркая казуальная мобильная игра на аккуратность, цель проста - пронести статую через уровень и водворить на постамент, не уронив её при этом с платформы.  <br> 5 уникальных миров с 35 уровнями, реалистичная физика разрушений, симуляции веревок на которых подвешена платформа, интересные уровни с прогрессирующей сложностью, магазин статуй и материалов, всё это создаёт приятный игровой процесс к которому хочется возвращаться и пробовать снова. Игра создана на Unity. <br> Скачать Android версию с полностью разблокированным контентом для ознакомления можно по ссылке ниже.</p>
                     <a href="files/Statues.arm64-v8a.apk" class="download-apk-button" download>Download APK</a>
                 </div>
