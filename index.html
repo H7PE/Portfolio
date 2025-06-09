@@ -5,496 +5,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ilia Iashnikov - GameDev, WebDesign, Creative Coding</title>
 	<link rel="icon" href="favicon.png" type="image/png">
+	<meta name="description" content="A personal portfolio of Ilia Iashnikov, a creative developer specializing in GameDev, WebDesign, and interactive experiences. Discover unique projects built with Unity, WebGL, JavaScript, and more.">
+    <meta name="author" content="Ilia Iashnikov">
+    <meta name="keywords" content="Ilia Iashnikov, game developer, game designer, web designer, creative coder, Unity, WebGL, JavaScript, C#, portfolio, St. Petersburg, gamedev, webdev">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
     <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
     <style>
-        @font-face {
-            font-family: 'Trail';
-            src: url('fonts/Trail.otf') format('opentype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'CalSun';
-            src: url('fonts/CalSun.otf') format('opentype');
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'ComfortaaVar';
-            src: url('fonts/ComfortaaVar.ttf') format('truetype-variations');
-            font-weight: 300 700;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        :root {
-            --bg-color: #0A0A0F;
-            --primary-text-color: #e8e8e8;
-
-            --accent-color-1: #1fffd2;
-            --accent-color-2: #f75e25;
-            --accent-color-3: #ff1947;
-            --accent-color-4: #00ff00;
-
-            --blob-color-magenta: #ff00cc;
-            --blob-color-cyan: #00ffff;
-            --blob-color-lime: #7aff03;
-	    --blob-color-orange: #f54021;
-
-            --cursor-dot-color: var(--accent-color-1);
-            --cursor-outline-color: var(--accent-color-2);
-            --grid-color: rgba(90, 0, 90, 1);
-            --section-bg-color: rgba(0, 0, 0, 0.4);
-            --card-bg-color: rgba(255, 255, 255, 0.035);
-            --card-border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'ComfortaaVar', 'Roboto Mono', monospace;
-            background-color: var(--bg-color);
-            color: var(--primary-text-color);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            cursor: none;
-            line-height: 1.7;
-            font-weight: 400;
-        }
-
-        .content-wrapper {
-            width: 100%;
-        }
-        
-
-
-        .background-elements {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; overflow: hidden;
-        }
-        .background-grid {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image:
-                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-            background-size: 3rem 3rem;
-            opacity: 0; transition: background-size 0.5s ease-out;
-        }
-        .background-blobs {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            filter: url(#gooeyFilter);
-        }
-        .background-blobs circle { mix-blend-mode: screen; }
-
-        .cursor-dot, .cursor-outline {
-            position: fixed; top: 0; left: 0; border-radius: 50%;
-            pointer-events: none; z-index: 9999; mix-blend-mode: difference;
-        }
-        .cursor-dot { width: 0.5rem; height: 0.5rem; background-color: var(--cursor-dot-color); }
-        .cursor-outline {
-            width: 2.5rem; height: 2.5rem; border: 0.125rem solid var(--cursor-outline-color);
-            transition: transform 0.2s ease-out, border-color 0.2s ease-out, opacity 0.2s ease-out, width 0.2s ease-out, height 0.2s ease-out;
-        }
-        .cursor-text {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 0.625rem; color: var(--bg-color); opacity: 0;
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif; font-weight: 500;
-        }
-        .cursor-outline.hover-link .cursor-text { opacity: 1; }
-        .cursor-outline.hover-link { background-color: var(--cursor-outline-color); }
-
-        header {
-            min-height: 100vh; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 1.25rem;
-            position: relative; overflow: hidden;
-        }
-        .hero-content-wrapper {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 1.25rem;
-            width: 100%; max-width: 1300px;
-            padding: 0 3vw;
-            margin: 0 auto;
-        }
-        .hero-text {
-            flex-basis: 60%; max-width: 700px; text-align: left;
-        }
-
-        .name {
-            font-family: 'Trail', 'Syne', sans-serif;
-            font-weight: normal;
-            font-size: clamp(4.8rem, 16vw, 11rem);
-            margin-bottom: 0.1em;
-            color: var(--primary-text-color);
-            position: relative;
-            line-height: 1.0;
-            mix-blend-mode: difference;
-        }
-        .name-line {
-            display: block; text-align: inherit;
-        }
-        .name .char {
-            display: inline-block; will-change: transform, opacity, filter;
-            cursor: none; position: relative;
-        }
-
-        .title-line {
-            font-family: 'CalSun', 'ComfortaaVar', sans-serif;
-            font-size: clamp(1.65rem, 4.2vw, 2.7rem);
-            font-weight: normal;
-            color: var(--primary-text-color);
-            margin-bottom: 1em;
-            margin-top: 0.8em;
-            display: block;
-            mix-blend-mode: difference;
-            line-height: 1.3;
-            text-shadow:
-                0 0 8px rgba(255, 255, 255, 0.6),
-                0 0 12px rgba(255, 255, 255, 0.4);
-            position: relative; 
-        }
-        .title-line .cap {
-            font-size: 1.2em;
-            display: inline-block;
-            transform: translateY(0.09em);
-        }
-        .title-line .x-separator {
-            font-size: 0.75em;
-            margin: 0 0.15em;
-            opacity: 0.8;
-            display: inline-block;
-            transform: translateY(-0.1em);
-        }
-        .title-line .char {
-            display: inline-block;
-            will-change: transform, opacity;
-            position: relative; 
-        }
-
-        .hero-image-container {
-            flex-basis: 35%;
-            max-width: 420px;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .hero-photo {
-            width: 100%; height: auto; object-fit: cover;
-            border-radius: 1.5rem;
-            -webkit-mask-image:
-                linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%),
-                linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            mask-image:
-                linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%),
-                linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-            -webkit-mask-composite: source-in;
-            mask-composite: intersect;
-        }
-
-        nav {
-            margin-top: 3rem;
-            width: 100%;
-            z-index: 100;
-            padding: 0 1rem;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-        }
-        nav a {
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif;
-            text-decoration: none;
-            color: var(--primary-text-color);
-            font-size: clamp(1.35rem, 2.7vw, 1.575rem);
-            font-weight: 500;
-            padding: 0.625rem 0;
-            position: relative;
-            letter-spacing: 1.5px;
-            text-shadow:
-                0 0 8px rgba(0, 0, 0, 0.9),
-                0 0 12px rgba(0, 0, 0, 0.6);
-            display: inline-block;
-        }
-        nav a .char {
-            display: inline-block;
-            will-change: transform;
-            position: relative;
-            white-space: pre;
-        }
-
-        .content-section {
-            padding-top: 0.1rem;
-            padding-bottom: 3rem;
-            padding-left: 5vw;
-            padding-right: 5vw;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-            min-height: 50vh;
-            position: relative;
-            border-top: 1px solid rgba(255,255,255,0.07);
-            background: var(--section-bg-color);
-            backdrop-filter: blur(8px);
-            border-radius: 3.5rem;
-        }
-        .content-section:not(:last-of-type) {
-            margin-bottom: 4rem;
-        }
-        .content-section:first-of-type {
-            border-top: none;
-            margin-top: 0.1rem;
-        }
-
-        .section-title {
-            font-family: 'CalSun', 'Syne', sans-serif;
-            font-weight: normal;
-            font-size: clamp(2.5rem, 7vw, 4rem);
-            color: var(--primary-text-color);
-            margin-bottom: 1.5rem;
-            position: relative; text-align: center;
-	    text-shadow:
-                0 0 8px rgba(255, 255, 255, 0.6),
-                0 0 12px rgba(255, 255, 255, 0.4);
-        }
-         .section-title .char { display: inline-block; }
-
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-            text-align: left;
-        }
-        .about-content p {
-            font-size: clamp(1rem, 2.2vw, 1.1rem); font-weight: 400;
-            margin-bottom: 1em;
-        }
-        .about-content p a {
-            color: var(--accent-color-2); text-decoration: none; font-weight: 600;
-            border-bottom: 1px dashed var(--accent-color-2);
-            transition: color 0.3s, border-bottom-color 0.3s;
-        }
-        .about-content p a:hover {
-            color: var(--accent-color-1); border-bottom-color: var(--accent-color-1);
-        }
-
-        .skills-list {
-            list-style: none;
-            padding: 0;
-            display: flex; flex-wrap: wrap;
-            gap: 0.75rem 1rem;
-            margin-top: 2rem;
-            justify-content: center;
-        }
-        .skills-list li {
-            background-color: var(--accent-color-2); color: var(--primary-text-color);
-            padding: 0.5rem 1.125rem;
-            border-radius: 1.5rem;
-            font-size: 0.9rem;
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif; font-weight: 500;
-            opacity: 0; transform: translateY(1.25rem);
-            border: 1px solid transparent;
-            transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
-        }
-        .skills-list li:hover {
-            background-color: var(--accent-color-3); color: var(--bg-color);
-            transform: translateY(-0.2rem) scale(1.05);
-        }
-
-        .projects-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-            margin-top: 2.5rem;
-        }
-        .project-card {
-            background-color: var(--card-bg-color); border: 1px solid var(--card-border-color);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 0; transform: translateY(3rem) scale(0.95);
-            will-change: transform, box-shadow; display: flex; flex-direction: column;
-        }
-        .project-card:hover {
-            transform: translateY(-0.75rem) scale(1.03);
-            box-shadow: 0 1.5rem 3rem rgba(0,0,0,0.35);
-            border-color: var(--accent-color-1);
-        }
-        .project-card h3 {
-            font-family: 'CalSun', 'Syne', sans-serif; font-weight: normal;
-            color: var(--accent-color-2);
-            margin-top: 0;
-            margin-bottom: 1rem;
-            font-size: 2.2rem;
-        }
-        .project-card h3 a.project-title-link { 
-            text-decoration: none;
-            color: inherit;
-            transition: color 0.3s ease;
-        }
-        .project-card h3 a.project-title-link:hover {
-            color: var(--accent-color-1);
-        }
-        .project-card p {
-            font-size: 0.95rem;
-            margin-bottom: 1.25rem;
-            flex-grow: 1; font-family: 'ComfortaaVar', 'Roboto Mono', monospace;
-            font-weight: 400;
-        }
-        .project-card .project-tech {
-            font-size: 0.85rem; color: var(--accent-color-1); opacity: 0.75;
-            font-family: 'ComfortaaVar', 'Roboto Mono', monospace; font-weight: 500;
-        }
-        .project-video-container, .project-iframe-container, .project-placeholder {
-            width: 100%;
-            margin-bottom: 1.25rem;
-            border-radius: 0.5rem;
-            overflow: hidden; background-color: #000; 
-        }
-        .project-video-container video, .project-iframe-container iframe {
-            display: block; width: 100%; height: auto;
-            aspect-ratio: 16 / 9; border: none; 
-        }
-
-        
-        .project-video-container.bullet-time-video {
-            background-color: transparent; 
-        }
-        .project-video-container.bullet-time-video video {
-            object-fit: cover; 
-        }
-
-
-        .download-apk-button { 
-            display: inline-block;
-            background-color: var(--accent-color-2);
-            color: var(--primary-text-color);
-            padding: 0.75rem 1.5rem;
-            border-radius: 1.5rem;
-            font-size: 0.95rem;
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-            margin-top: 1.25rem;
-            margin-bottom: 0.5rem;
-            border: 1px solid transparent;
-            transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-        }
-        .download-apk-button:hover {
-            background-color: var(--accent-color-3);
-            color: var(--bg-color);
-            transform: translateY(-3px) scale(1.05);
-            border-color: var(--accent-color-1);
-        }
-
-
-        .contact-links {
-            display: flex; flex-direction: column; gap: 0.5rem;
-            align-items: center;
-        }
-        .contact-links a {
-            color: var(--accent-color-3); text-decoration: none;
-            font-family: 'ComfortaaVar', 'Orbitron', sans-serif;
-            font-size: clamp(1.1rem, 2.5vw, 1.4rem); font-weight: 600;
-            transition: color 0.3s, transform 0.3s, letter-spacing 0.3s;
-            padding: 0.3rem 0.6rem;
-            border-bottom: 2px solid transparent;
-        }
-        .contact-links a:hover {
-            color: var(--primary-text-color); transform: scale(1.05) translateX(0.3rem);
-            letter-spacing: 1px;
-            border-bottom-color: var(--accent-color-1);
-        }
-        .contact-message {
-            text-align: center;
-            margin-bottom: 2rem;
-            font-size: clamp(1rem, 2.2vw, 1.15rem); max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            font-family: 'ComfortaaVar', 'Roboto Mono', monospace; font-weight: 400;
-        }
-
-        
-        #contact {
-            padding-top: 0.5rem;
-            padding-bottom: 5rem;
-        }
-
-        #contact .section-title {
-            margin-bottom: 0.75rem;
-        }
-       
-
-
-        .about-content p,
-        .project-card p,
-        .contact-message {
-            text-shadow:
-                0 0 8px rgba(0, 0, 0, 0.9),
-                0 0 12px rgba(0, 0, 0, 0.6);
-        }
-
-        .sr-only {
-            position: absolute; width: 1px; height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
-        }
-        
-        footer { 
-            text-align: center;
-            padding: 2rem 1rem;
-            margin-top: 1rem; 
-            font-size: 0.9rem;
-            color: rgba(232, 232, 232, 0.7);
-            font-family: 'ComfortaaVar', 'Roboto Mono', monospace;
-        }
-
-
-        @media (max-width: 992px) { 
-            .hero-text {
-                text-align: center; flex-basis: 100%;
-                margin-bottom: 2rem;
-                max-width: none;
-            }
-            .hero-image-container {
-                flex-basis: 70%; max-width: 22.5rem;
-                margin: 0 auto 1.5rem auto;
-            }
-            .name { font-size: clamp(4rem, 15vw, 9rem); }
-            .title-line { font-size: clamp(1.5rem, 4.5vw, 2.4rem); }
-            nav a { font-size: clamp(1.35rem, 2.7vw, 1.575rem); }
-
-            nav { margin-top: 2rem; }
-            .hero-content-wrapper {
-                flex-direction: column; justify-content: center; gap: 2rem;
-            }
-        }
-        @media (max-width: 768px) { 
-             .project-video-container.statues-video video { max-height: 25rem; }
-             .name { font-size: clamp(5.25rem, 19.5vw, 11.25rem); }
-             .hero-image-container { max-width: 16.25rem; }
-             nav ul { gap: 1.25rem; }
-        }
-        @media (max-width: 480px) { 
-            .name { font-size: clamp(4.5rem, 18vw, 9rem); }
-            .title-line { font-size: clamp(1.35rem, 4.2vw, 2.1rem); }
-            .hero-image-container { max-width: 13.75rem; }
-            nav ul { gap: 1rem; justify-content: space-around; }
-            nav a { font-size: clamp(1.2rem, 2.5vw, 1.4rem); letter-spacing: 1px;}
-            .content-section { border-radius: 2.5rem; }
-        }
-
+@font-face{font-family:'Trail';src:url('fonts/Trail.otf') format('opentype');font-weight:normal;font-style:normal;font-display:swap}
+@font-face{font-family:'CalSun';src:url('fonts/CalSun.otf') format('opentype');font-weight:normal;font-style:normal;font-display:swap}
+@font-face{font-family:'ComfortaaVar';src:url('fonts/ComfortaaVar.ttf') format('truetype-variations');font-weight:300 700;font-style:normal;font-display:swap}
+:root{--bg-color:#0A0A0F;--primary-text-color:#e8e8e8;--accent-color-1:#1fffd2;--accent-color-2:#f75e25;--accent-color-3:#ff1947;--accent-color-4:#00ff00;--blob-color-magenta:#ff00cc;--blob-color-cyan:#00ffff;--blob-color-lime:#7aff03;--blob-color-orange:#f54021;--cursor-dot-color:var(--accent-color-1);--cursor-outline-color:var(--accent-color-2);--grid-color:rgba(90,0,90,1);--section-bg-color:rgba(0,0,0,0.4);--card-bg-color:rgba(255,255,255,0.035);--card-border-color:rgba(255,255,255,0.1)}
+*,*::before,*::after{box-sizing:border-box}
+body{font-family:'ComfortaaVar','Roboto Mono',monospace;background-color:var(--bg-color);color:var(--primary-text-color);margin:0;padding:0;overflow-x:hidden;cursor:none;line-height:1.7;font-weight:400}
+.content-wrapper{width:100%}
+.background-elements{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;overflow:hidden}
+.background-grid{position:absolute;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(to right,var(--grid-color) 1px,transparent 1px),linear-gradient(to bottom,var(--grid-color) 1px,transparent 1px);background-size:3rem 3rem;opacity:0;transition:background-size .5s ease-out;z-index:1}
+#glcanvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2}
+.cursor-dot,.cursor-outline{position:fixed;top:0;left:0;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:difference;display:none}
+.cursor-dot{width:.5rem;height:.5rem;background-color:var(--cursor-dot-color)}
+.cursor-outline{width:2.5rem;height:2.5rem;border:.125rem solid var(--cursor-outline-color);transition:transform .2s ease-out,border-color .2s ease-out,opacity .2s ease-out,width .2s ease-out,height .2s ease-out}
+.cursor-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.625rem;color:var(--bg-color);opacity:0;font-family:'ComfortaaVar','Orbitron',sans-serif;font-weight:500}
+.cursor-outline.hover-link .cursor-text{opacity:1}
+.cursor-outline.hover-link{background-color:var(--cursor-outline-color)}
+header{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.25rem;position:relative;overflow:hidden}
+.hero-content-wrapper{display:flex;align-items:center;justify-content:space-between;gap:1.25rem;width:100%;max-width:1300px;padding:0 3vw;margin:0 auto}
+.hero-text{flex-basis:60%;max-width:700px;text-align:left}
+.name{font-family:'Trail','Syne',sans-serif;font-weight:normal;font-size:clamp(4.8rem,16vw,11rem);margin-bottom:.1em;color:var(--primary-text-color);position:relative;line-height:1;mix-blend-mode:difference}
+.name-line{display:block;text-align:inherit}
+.name-line:last-of-type{white-space:nowrap}
+.name .char{display:inline-block;will-change:transform,opacity,filter;cursor:none;position:relative}
+.title-line{font-family:'CalSun','ComfortaaVar',sans-serif;font-size:clamp(1.65rem,4.2vw,2.7rem);font-weight:normal;color:var(--primary-text-color);margin-bottom:1em;margin-top:.8em;display:block;mix-blend-mode:difference;line-height:1.3;text-shadow:0 0 8px rgba(255,255,255,.6),0 0 12px rgba(255,255,255,.4);position:relative}
+.title-line .term{display:inline-block;white-space:nowrap}
+.title-line .cap{font-size:1.2em;display:inline-block;transform:translateY(.09em)}
+.title-line .x-separator{font-size:.75em;margin:0 .15em;opacity:.8;display:inline-block;transform:translateY(-.1em)}
+.title-line .char{display:inline-block;will-change:transform,opacity;position:relative}
+.hero-image-container{flex-basis:35%;max-width:420px;display:flex;justify-content:center;align-items:center;margin:0;padding:0}
+.hero-photo{width:100%;height:auto;object-fit:cover;border-radius:1.5rem;-webkit-mask-image:linear-gradient(to right,transparent 0,black 15%,black 85%,transparent 100%),linear-gradient(to bottom,transparent 0,black 15%,black 85%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,black 15%,black 85%,transparent 100%),linear-gradient(to bottom,transparent 0,black 15%,black 85%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect}
+nav{margin-top:3rem;width:100%;z-index:100;padding:0 1rem}
+nav ul{list-style:none;padding:0;margin:0;display:flex;justify-content:center;gap:1.5rem}
+nav a{font-family:'ComfortaaVar','Orbitron',sans-serif;text-decoration:none;color:var(--primary-text-color);font-size:clamp(1.35rem,2.7vw,1.575rem);font-weight:500;padding:.625rem 0;position:relative;letter-spacing:1.5px;text-shadow:0 0 8px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.6);display:inline-block}
+nav a .char{display:inline-block;will-change:transform;position:relative;white-space:pre}
+.content-section{padding-top:.1rem;padding-bottom:3rem;padding-left:5vw;padding-right:5vw;max-width:1000px;margin-left:auto;margin-right:auto;min-height:50vh;position:relative;border-top:1px solid rgba(255,255,255,.07);background:var(--section-bg-color);backdrop-filter:blur(8px);border-radius:3.5rem}
+.content-section:not(:last-of-type){margin-bottom:4rem}
+.content-section:first-of-type{border-top:none;margin-top:.1rem}
+.section-title{font-family:'CalSun','Syne',sans-serif;font-weight:normal;font-size:clamp(2.5rem,7vw,4rem);color:var(--primary-text-color);margin-bottom:1.5rem;position:relative;text-align:center;text-shadow:0 0 8px rgba(255,255,255,.6),0 0 12px rgba(255,255,255,.4)}
+.section-title .char{display:inline-block}
+.about-content{max-width:800px;margin:0 auto;text-align:left}
+.about-content p{font-size:clamp(1rem,2.2vw,1.1rem);font-weight:400;margin-bottom:1em}
+.about-content p a{color:var(--accent-color-2);text-decoration:none;font-weight:600;border-bottom:1px dashed var(--accent-color-2);transition:color .3s,border-bottom-color .3s}
+.about-content p a:hover{color:var(--accent-color-1);border-bottom-color:var(--accent-color-1)}
+.skills-list{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.75rem 1rem;margin-top:2rem;justify-content:center}
+.skills-list li{background-color:var(--accent-color-2);color:var(--primary-text-color);padding:.5rem 1.125rem;border-radius:1.5rem;font-size:.9rem;font-family:'ComfortaaVar','Orbitron',sans-serif;font-weight:500;opacity:0;transform:translateY(1.25rem);border:1px solid transparent;transition:background-color .3s,border-color .3s,transform .3s}
+.skills-list li:hover{background-color:var(--accent-color-3);color:var(--bg-color);transform:translateY(-.2rem) scale(1.05)}
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:2.5rem;margin-top:2.5rem}
+.project-card{background-color:var(--card-bg-color);border:1px solid var(--card-border-color);padding:1.5rem;border-radius:.75rem;transition:transform .4s cubic-bezier(.165,.84,.44,1),box-shadow .4s cubic-bezier(.165,.84,.44,1);opacity:0;transform:translateY(3rem) scale(.95);will-change:transform,box-shadow;display:flex;flex-direction:column}
+.project-card:hover{transform:translateY(-.75rem) scale(1.03);box-shadow:0 1.5rem 3rem rgba(0,0,0,.35);border-color:var(--accent-color-1)}
+.project-card h3{font-family:'CalSun','Syne',sans-serif;font-weight:normal;color:var(--accent-color-2);margin-top:0;margin-bottom:1rem;font-size:2.2rem}
+.project-card h3 a.project-title-link{text-decoration:none;color:inherit;transition:color .3s ease}
+.project-card h3 a.project-title-link:hover{color:var(--accent-color-1)}
+.project-card p{font-size:.95rem;margin-bottom:1.25rem;flex-grow:1;font-family:'ComfortaaVar','Roboto Mono',monospace;font-weight:400}
+.project-card .project-tech{font-size:.85rem;color:var(--accent-color-1);opacity:.75;font-family:'ComfortaaVar','Roboto Mono',monospace;font-weight:500}
+.project-video-container,.project-iframe-container,.project-placeholder{width:100%;margin-bottom:1.25rem;border-radius:.5rem;overflow:hidden;background-color:#000}
+.project-video-container video,.project-iframe-container iframe{display:block;width:100%;height:auto;aspect-ratio:16 / 9;border:none}
+.project-video-container.bullet-time-video{background-color:transparent}
+.project-video-container.bullet-time-video video{object-fit:cover}
+.download-apk-button{display:inline-block;background-color:var(--accent-color-2);color:var(--primary-text-color);padding:.75rem 1.5rem;border-radius:1.5rem;font-size:.95rem;font-family:'ComfortaaVar','Orbitron',sans-serif;font-weight:600;text-decoration:none;text-align:center;margin-top:1.25rem;margin-bottom:.5rem;border:1px solid transparent;transition:background-color .3s,color .3s,transform .3s,box-shadow .3s,border-color .3s}
+.download-apk-button:hover{background-color:var(--accent-color-3);color:var(--bg-color);transform:translateY(-3px) scale(1.05);border-color:var(--accent-color-1)}
+.contact-links{display:flex;flex-direction:column;gap:.5rem;align-items:center}
+.contact-links a{color:var(--accent-color-3);text-decoration:none;font-family:'ComfortaaVar','Orbitron',sans-serif;font-size:clamp(1.1rem,2.5vw,1.4rem);font-weight:600;transition:color .3s,transform .3s,letter-spacing .3s;padding:.3rem .6rem;border-bottom:2px solid transparent}
+.contact-links a:hover{color:var(--primary-text-color);transform:scale(1.05) translateX(.3rem);letter-spacing:1px;border-bottom-color:var(--accent-color-1)}
+.contact-message{text-align:center;margin-bottom:2rem;font-size:clamp(1rem,2.2vw,1.15rem);max-width:600px;margin-left:auto;margin-right:auto;font-family:'ComfortaaVar','Roboto Mono',monospace;font-weight:400}
+#contact{padding-top:.5rem;padding-bottom:5rem}
+#contact .section-title{margin-bottom:.75rem}
+.about-content p,.project-card p,.contact-message{text-shadow:0 0 8px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.6)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+footer{text-align:center;padding:2rem 1rem;margin-top:1rem;font-size:.9rem;color:rgba(232,232,232,.7);font-family:'ComfortaaVar','Roboto Mono',monospace}
+@media (max-width:992px){.hero-text{text-align:center;flex-basis:100%;margin-bottom:2rem;max-width:none}.hero-image-container{flex-basis:auto;max-width:20rem;margin:0 auto 1.5rem auto}.name{font-size:clamp(3.8rem,14.5vw,8.5rem)}.title-line{font-size:clamp(1.4rem,4.3vw,2.2rem)}nav a{font-size:clamp(1.35rem,2.7vw,1.575rem)}nav{margin-top:2rem}.hero-content-wrapper{flex-direction:column;justify-content:center;gap:2rem}}
+@media (max-width:768px){.project-video-container.statues-video video{max-height:25rem}.name{font-size:clamp(5.25rem,19.5vw,11.25rem)}.hero-image-container{max-width:16.25rem}nav ul{gap:1.25rem}}
+@media (max-width:480px){.name{font-size:clamp(4.5rem,18vw,9rem)}.title-line{font-size:clamp(1.35rem,4.2vw,2.1rem)}.hero-image-container{max-width:13.75rem}nav ul{gap:1rem;justify-content:space-around}nav a{font-size:clamp(1.2rem,2.5vw,1.4rem);letter-spacing:1px}.content-section{border-radius:2.5rem}}
     </style>
 </head>
 <body>
@@ -505,20 +95,7 @@
 
     <div class="background-elements">
         <div class="background-grid"></div>
-        <svg class="background-blobs" aria-hidden="true">
-            <defs>
-                <filter id="gooeyFilter">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
-                    <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -11" result="contrast" />
-                </filter>
-            </defs>
-            <g>
-                <circle class="blob" cx="20%" cy="30%" r="150" fill="var(--blob-color-magenta)" opacity="0.65"/>
-                <circle class="blob" cx="80%" cy="70%" r="250" fill="var(--blob-color-cyan)" opacity="0.65"/>
-                <circle class="blob" cx="50%" cy="50%" r="120" fill="var(--blob-color-lime)" opacity="0.55"/>
-                <circle class="blob" cx="35%" cy="75%" r="180" fill="var(--blob-color-orange)" opacity="0.6"/>
-            </g>
-        </svg>
+        <canvas id="glcanvas"></canvas>
     </div>
 
     <header id="hero">
@@ -528,12 +105,12 @@
                     <span class="name-line" data-splitting="chars">Ilia</span>
                     <span class="name-line" data-splitting="chars">Iashnikov</span>
                 </h1>
-                <p class="title-line" data-splitting="chars">
-                    <span class="cap">G</span>ame<span class="cap">D</span>ev <span class="x-separator">⨯</span> <span class="cap">W</span>eb<span class="cap">D</span>esign <span class="x-separator">⨯</span> <span class="cap">C</span>reative<span class="cap">C</span>oding
+                <p class="title-line">
+                    <span class="term" data-splitting="chars"><span class="cap">G</span>ame<span class="cap">D</span>ev</span> <span class="x-separator">⨯</span> <span class="term" data-splitting="chars"><span class="cap">W</span>eb<span class="cap">D</span>esign</span> <span class="x-separator">⨯</span> <span class="term" data-splitting="chars"><span class="cap">C</span>reative<span class="cap">C</span>oding</span>
                 </p>
             </div>
             <div class="hero-image-container">
-                <img src="images/me.jpg" alt="Ilia Iashnikov" class="hero-photo">
+                <img src="images/me.jpg" alt="Ilia Iashnikov" class="hero-photo" loading="eager" fetchpriority="high">
             </div>
         </div>
         <nav>
@@ -578,26 +155,26 @@
             <div class="projects-grid">
                 <div class="project-card">
                     <h3>Statues</h3>
-                    <div style="padding:140% 0 0 0;position:relative;margin-bottom: 1.25rem;border-radius: 0.5rem; overflow: hidden;"><iframe src="https://player.vimeo.com/video/1072473115?h=4a53bf3607&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Statues Crash Game Trailer"></iframe></div>
+                    <div style="padding:140% 0 0 0;position:relative;margin-bottom: 1.25rem;border-radius: 0.5rem; overflow: hidden;"><iframe src="https://player.vimeo.com/video/1072473115?h=4a53bf3607&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Statues Crash Game Trailer" loading="lazy"></iframe></div>
                     <p>Statues - Яркая казуальная мобильная игра на аккуратность, цель проста - пронести статую через уровень и водворить на постамент, не уронив её при этом с платформы.  <br> 5 уникальных миров с 35 уровнями, реалистичная физика разрушений, симуляции веревок на которых подвешена платформа, интересные уровни с прогрессирующей сложностью, магазин статуй и материалов, всё это создаёт приятный игровой процесс к которому хочется возвращаться и пробовать снова. Игра создана на Unity. <br> Скачать Android версию с полностью разблокированным контентом для ознакомления можно по ссылке ниже.</p>
                     <a href="files/Statues.arm64-v8a.apk" class="download-apk-button" download>Download APK</a>
                 </div>
                 <div class="project-card">
-                    <h3>Take-a-Trip</h3>
+                    <h3><a href="TakeATrip.html" target="_blank" rel="noopener noreferrer" class="project-title-link">Take-a-Trip</a></h3>
                     <div class="project-video-container">
-                        <video autoplay loop muted playsinline preload="metadata">
+                        <video autoplay loop muted playsinline preload="metadata" loading="lazy">
                             <source src="images/takeatrip.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
                     </div>
-                    <div style="padding:56.25% 0 0 0;position:relative;margin-bottom: 1.25rem;border-radius: 0.5rem;overflow: hidden;"><iframe src="https://player.vimeo.com/video/1091640328?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Quixotic - Palms (Take-a-Trip Glitch Art Version)"></iframe></div>
+                    <div style="padding:56.25% 0 0 0;position:relative;margin-bottom: 1.25rem;border-radius: 0.5rem;overflow: hidden;"><iframe src="https://player.vimeo.com/video/1091640328?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Quixotic - Palms (Take-a-Trip Glitch Art Version)" loading="lazy"></iframe></div>
                     <p>Веб-приложение на основе WebGL для создания эффектов Glitch-art и Datamoshing в реальном времени. Можно использовать любой медиа-источник (веб-камеру, видео, изображение) и экспериментировать с ползунками, чтобы влиять на визуальные эффекты. Свои творения можно легко записать с помощью кнопки «Rec». <br>В последней версии добавлена реакция на аудио, можно тонко настроить привязку и силу конкретных эффектов на различные характеристики звука. Приложение адаптировано для мобильных устройств.</p>
                     <a href="TakeATrip.html" class="download-apk-button" target="_blank">Try Now</a>
                 </div>
                 <div class="project-card">
                     <h3><a href="BulletTime.html" target="_blank" rel="noopener noreferrer" class="project-title-link">Bullet Time</a></h3>
                     <div class="project-video-container bullet-time-video">
-                        <video autoplay loop muted playsinline preload="metadata">
+                        <video autoplay loop muted playsinline preload="metadata" loading="lazy">
                             <source src="images/bulletTime.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -608,7 +185,7 @@
                  <div class="project-card">
                     <h3><a href="VectorFieldFlow.html" target="_blank" rel="noopener noreferrer" class="project-title-link">Vector Field Wallpapers</a></h3>
                      <div class="project-video-container">
-                        <video autoplay loop muted playsinline preload="metadata">
+                        <video autoplay loop muted playsinline preload="metadata" loading="lazy">
                             <source src="images/wallpapers.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -633,491 +210,309 @@
         <p>&copy; <span id="currentYear"></span> Ilia Iashnikov. All rights reserved.</p>
     </footer>
 
-    </div> <!-- .content-wrapper -->
+    </div>
 
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec2 a_position;
+        void main() {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+        }
+    </script>
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        const int NUM_BLOBS = 4;
+        const float GLOW_INTENSITY = 2.0;
+        const float FALLOFF = 4.5;
+        struct Blob {
+            vec2 center;
+            float radius;
+            vec3 color;
+        };
+        uniform Blob u_blobs[NUM_BLOBS];
+        void main() {
+            vec2 st = gl_FragCoord.xy;
+            float total_influence = 0.0;
+            vec3 final_color_weighted = vec3(0.0);
+            for (int i = 0; i < NUM_BLOBS; i++) {
+                float dist_sq = dot(st - u_blobs[i].center, st - u_blobs[i].center);
+                float influence = u_blobs[i].radius * u_blobs[i].radius / dist_sq;
+                total_influence += influence;
+                final_color_weighted += u_blobs[i].color * influence;
+            }
+            float alpha = pow(total_influence, FALLOFF);
+            alpha = clamp(alpha, 0.0, 1.0);
+            if (alpha > 0.001) {
+                vec3 body_color = final_color_weighted / total_influence;
+                vec3 glow_color = body_color * GLOW_INTENSITY;
+                vec3 final_color = mix(body_color, glow_color, 1.0 - smoothstep(0.0, 1.0, alpha));
+                gl_FragColor = vec4(final_color, alpha);
+            } else {
+                gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+            }
+        }
+    </script>
     <script>
-        gsap.defaults({force3D: "auto"});
-        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-        Splitting({
-            target: "[data-splitting]",
-            by: "chars",
-        });
-
-        const nameChars = document.querySelectorAll('.name .char');
-        const titleLine = document.querySelector('.title-line');
-        const titleChars = titleLine ? titleLine.querySelectorAll('.char') : [];
-        const navLinkElements = document.querySelectorAll('nav a');
-        const sectionTitles = document.querySelectorAll('.section-title');
-        const skillItems = document.querySelectorAll('.skills-list li');
-        const projectCards = document.querySelectorAll('.project-card');
-        const heroPhoto = document.querySelector('.hero-photo');
-
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorOutline = document.querySelector('.cursor-outline');
-        const cursorText = document.querySelector('.cursor-text');
-
-        const { to, from, timeline, set, utils, effects, ticker } = gsap;
-
-        // --- 1. Custom Cursor ---
-        set(cursorDot, { xPercent: -50, yPercent: -50 });
-        set(cursorOutline, { xPercent: -50, yPercent: -50 });
-
-        let mouseX = 0, mouseY = 0;
-        let outlineX = 0, outlineY = 0;
-        const outlineEase = 0.08;
-
-        window.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
-        ticker.add(() => {
-            to(cursorDot, { duration: 0.2, x: mouseX, y: mouseY, ease: "power2.out" });
-            outlineX += (mouseX - outlineX) * outlineEase;
-            outlineY += (mouseY - outlineY) * outlineEase;
-            set(cursorOutline, { x: outlineX, y: outlineY });
-        });
-
-        document.querySelectorAll('a, button, .project-card, .name .char, .title-line .char, .section-title .char, .skills-list li, nav a .char, .download-apk-button').forEach(el => { 
-            el.addEventListener('mouseenter', () => {
-                cursorOutline.classList.add('hover-link');
-                if(el.closest('.project-card')) cursorText.textContent = 'EXPLORE';
-                else if (el.classList.contains('char') && el.closest('nav a') || el.tagName === 'A' && el.closest('nav')) {
-                    cursorText.textContent = 'NAV';
-                }
-                else if (el.classList.contains('download-apk-button')) cursorText.textContent = 'GET'; 
-                else if (el.closest('a')) cursorText.textContent = 'LINK';
-                else if (el.classList.contains('skills-list') || el.parentElement.classList.contains('skills-list')) cursorText.textContent = 'SKILL';
-                else cursorText.textContent = 'PLAY';
-
-                let targetSize = "3.125rem"; 
-                if (el.closest('.name') || el.closest('.section-title') || (el.tagName === 'A' && el.closest('nav')) || (el.classList.contains('char') && el.closest('nav a')) || el.closest('.title-line')) {
-                    targetSize = "3.75rem"; 
-                }
-
-
-                to(cursorOutline, {
-                    duration: 0.3, scale: 1.3, opacity: 1,
-                    width: targetSize,
-                    height: targetSize,
-                });
-                 to(cursorDot, { duration: 0.3, scale: 0.7 });
-            });
-            el.addEventListener('mouseleave', () => {
-                cursorOutline.classList.remove('hover-link');
-                cursorText.textContent = 'VIEW';
-                to(cursorOutline, {
-                    duration: 0.3, scale: 1, opacity: 1,
-                    width: "2.5rem", height: "2.5rem", 
-                });
-                to(cursorDot, { duration: 0.3, scale: 1 });
-            });
-        });
-
-        // --- 2. Background Grid ---
-        to('.background-grid', { opacity: 1, duration: 2, delay: 0.5 });
-
-        const grid = document.querySelector('.background-grid');
-        if (grid) {
-            window.addEventListener('mousemove', (e) => {
-                const xPercent = (e.clientX / window.innerWidth - 0.5) * 2;
-                const yPercent = (e.clientY / window.innerHeight - 0.5) * 2;
-                to(grid, {
-                    duration: 1,
-                    backgroundPositionX: `${50 + xPercent * 10}%`,
-                    backgroundPositionY: `${50 + yPercent * 10}%`,
-                    ease: 'power1.out'
-                });
-            });
-        }
-
-        // --- Background Blobs ---
-        const blobs = document.querySelectorAll('.background-blobs .blob');
-        const svgBlobsContainer = document.querySelector('.background-blobs');
-
-        function originalAnimateBlob(blob) {
-            to(blob, {
-                duration: utils.random(10, 20), 
-                attr: {
-                    cx: `${utils.random(5, 95)}%`,
-                    cy: `${utils.random(5, 95)}%`,
-                    r: utils.random(120, 320)
-                },
-                opacity: utils.random(0.55, 0.85),
-                ease: 'sine.inOut',
-                onComplete: () => originalAnimateBlob(blob) 
-            });
-        }
-
-
-        // --- 3. Hero Name Animation (Scatter & Attract) ---
-        if (nameChars.length > 0) {
-            from(nameChars, {
-                duration: 1.5, opacity: 0, scale: 0.1,
-                y: "random(-9rem, 9rem)", x: "random(-13rem, 13rem)",
-                rotation: "random(-360, 360)", filter: 'blur(0.375rem)',
-                ease: 'expo.out', stagger: { each: 0.03, from: 'random' },
-                delay: 0.8
-            });
-
-            const heroSection = document.getElementById('hero');
-            if (heroSection) {
-                heroSection.addEventListener('mousemove', (e) => {
-                    nameChars.forEach((char, i) => {
-                        const rect = char.getBoundingClientRect();
-                        const heroRect = heroSection.getBoundingClientRect();
-                        const relMouseX = e.clientX - heroRect.left;
-                        const relMouseY = e.clientY - heroRect.top;
-
-                        const charCenterX = rect.left - heroRect.left + rect.width / 2;
-                        const charCenterY = rect.top - heroRect.top + rect.height / 2;
-
-                        const dx = charCenterX - relMouseX;
-                        const dy = charCenterY - relMouseY;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        const maxDist = 170;
-
-                        if (distance < maxDist) {
-                            const force = (maxDist - distance) / maxDist;
-                            const angle = Math.atan2(dy, dx);
-                            const moveX = Math.cos(angle) * force * 22;
-                            const moveY = Math.sin(angle) * force * 22;
-                            to(char, {
-                                x: moveX, y: moveY,
-                                scale: 1 + force * 0.15,
-                                rotation: Math.sin(distance/12 + i/2.5) * force * 10,
-                                duration: 0.38, ease: 'power2.out',
-                                zIndex: 1
-                            });
-                        } else {
-                            to(char, {
-                                x: 0, y: 0, scale: 1, rotation: 0,
-                                duration: 0.6, ease: 'elastic.out(1, 0.45)',
-                                zIndex: 0
-                            });
-                        }
-                    });
-                });
-                heroSection.addEventListener('mouseleave', () => {
-                    to(nameChars, {
-                        x: 0, y: 0, scale: 1, rotation: 0,
-                        duration: 0.7, ease: 'elastic.out(1, 0.4)', stagger: 0.015, zIndex: 0
-                    });
-                });
-            }
-        }
-
-        // --- Hero Image Animation ---
-        if (heroPhoto) {
-            from(heroPhoto, {
-                opacity: 0, scale: 0.6, rotation: 15, x: "5rem",
-                duration: 1.3, ease: 'expo.out',
-                delay: 2.4
-            });
-        }
-
-        // --- 4. Title Line Animation (Initial Reveal by Chars) ---
-        if (titleChars.length > 0 && titleLine) {
-            from(titleChars, {
-                duration: 1, opacity: 0, y: "3rem", rotationX: -90,
-                transformOrigin: "50% 50% -1.25rem",
-                ease: 'back.out(1.4)',
-                stagger: 0.04,
-                delay: 2.5
-            });
-        }
-
-      
-        if (titleLine && titleChars.length > 0) {
-            titleLine.addEventListener('mousemove', (e) => {
-                titleChars.forEach((char, i) => {
-                    const rect = char.getBoundingClientRect();
-                    const titleLineRect = titleLine.getBoundingClientRect();
-                    const relMouseX = e.clientX - titleLineRect.left;
-                    const relMouseY = e.clientY - titleLineRect.top;
-
-                    const charCenterX = rect.left - titleLineRect.left + rect.width / 2;
-                    const charCenterY = rect.top - titleLineRect.top + rect.height / 2;
-
-                    const dx = charCenterX - relMouseX;
-                    const dy = charCenterY - relMouseY;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const maxDistTitle = 120; 
-                    
-                    if (distance < maxDistTitle) {
-                        const force = (maxDistTitle - distance) / maxDistTitle;
-                        const angle = Math.atan2(dy, dx);
-                        const moveFactor = 35; 
-                        const moveX = Math.cos(angle) * force * moveFactor;
-                        const moveY = Math.sin(angle) * force * moveFactor;
-                        const scaleFactor = 0.35; 
-                        const rotationFactor = 20; 
-
-                        to(char, {
-                            x: moveX,
-                            y: moveY,
-                            scale: 1 + force * scaleFactor,
-                            rotation: Math.sin(distance / (10 + i*0.5) + i / 2.0) * force * rotationFactor,
-                            duration: 0.3, 
-                            ease: 'power2.out',
-                            zIndex: 1
-                        });
-                    } else {
-                        to(char, {
-                            x: 0, y: 0, scale: 1, rotation: 0,
-                            duration: 0.5,
-                            ease: 'elastic.out(1, 0.5)',
-                            zIndex: 0
-                        });
-                    }
-                });
-            });
-
-            titleLine.addEventListener('mouseleave', () => {
-                to(titleChars, {
-                    x: 0, y: 0, scale: 1, rotation: 0,
-                    duration: 0.6,
-                    ease: 'elastic.out(1, 0.45)',
-                    stagger: 0.01,
-                    zIndex: 0
-                });
-            });
-        }
-
-
-        // --- 5. Nav Link Character ATTRACTION to Cursor ---
-        navLinkElements.forEach(navLink => {
-            const linkChars = navLink.querySelectorAll('.char');
-            if (linkChars.length > 0) {
-                navLink.addEventListener('mousemove', (e) => {
-                    linkChars.forEach((char, i) => {
-                        const rect = char.getBoundingClientRect();
-                        const linkRect = navLink.getBoundingClientRect();
-
-                        const relMouseX = e.clientX - linkRect.left;
-                        const relMouseY = e.clientY - linkRect.top;
-
-                        const charCenterX = rect.left - linkRect.left + rect.width / 2;
-                        const charCenterY = rect.top - linkRect.top + rect.height / 2;
-
-                        const dxToMouse = relMouseX - charCenterX;
-                        const dyToMouse = relMouseY - charCenterY;
-
-                        const distanceToMouse = Math.sqrt(dxToMouse * dxToMouse + dyToMouse * dyToMouse);
-                        const maxAttractionDist = 100;
-                        const attractionFactor = 0.55;
-
-                        if (distanceToMouse < maxAttractionDist) {
-                            const moveX = dxToMouse * attractionFactor * (1 - distanceToMouse / maxAttractionDist);
-                            const moveY = dyToMouse * attractionFactor * (1 - distanceToMouse / maxAttractionDist);
-
-                            to(char, {
-                                x: moveX,
-                                y: moveY,
-                                scale: 1,
-                                rotation: Math.sin(distanceToMouse / 12 + i / 2.8) * (1 - distanceToMouse / maxAttractionDist) * 25,
-                                duration: 0.2,
-                                ease: 'power1.out',
-                                zIndex: distanceToMouse < rect.width * 0.75 ? 2 : 1
-                            });
-                        } else {
-                            to(char, {
-                                x: 0, y: 0, scale: 1, rotation: 0,
-                                duration: 0.45, ease: 'elastic.out(1, 0.55)',
-                                zIndex: 0
-                            });
-                        }
-                    });
-                });
-
-                navLink.addEventListener('mouseleave', () => {
-                    to(linkChars, {
-                        x: 0, y: 0, scale: 1, rotation: 0,
-                        duration: 0.55, ease: 'elastic.out(1, 0.45)',
-                        stagger: 0.015,
-                        zIndex: 0
-                    });
-                });
-            }
-        });
-
-        // --- 6. Section Title Distortion/Reveal ---
-        sectionTitles.forEach(title => {
-            const chars = title.querySelectorAll('.char');
-            if (chars.length > 0) {
-                from(chars, {
-                    opacity: 0, x: () => utils.random("-3.5rem", "3.5rem"), y: () => utils.random("-3.5rem", "3.5rem"),
-                    scale: () => utils.random(0.4, 1.6), rotation: () => utils.random(-100, 100),
-                    filter: 'blur(0.375rem)', duration: 0.9, ease: 'power3.out',
-                    stagger: { amount: 0.35, from: 'random' },
-                    scrollTrigger: { trigger: title, start: 'top 88%', toggleActions: 'play none none none',}
-                });
-                title.addEventListener('mouseenter', () => {
-                    to(chars, {
-                        duration: 0.45, x: () => utils.random(-12, 12), y: () => utils.random(-6, 6),
-                        rotation: () => utils.random(-12, 12), skewX: () => utils.random(-18,18),
-                        color: () => utils.random([getComputedStyle(document.documentElement).getPropertyValue('--accent-color-1'), getComputedStyle(document.documentElement).getPropertyValue('--accent-color-2'), getComputedStyle(document.documentElement).getPropertyValue('--accent-color-3'), getComputedStyle(document.documentElement).getPropertyValue('--accent-color-4')]),
-                        stagger: { each: 0.025, from: 'random' }, ease: 'circ.inOut'
-                    });
-                });
-                title.addEventListener('mouseleave', () => {
-                    to(chars, {
-                        duration: 0.55, x:0, y:0, rotation:0, skewX:0,
-                        color: 'var(--primary-text-color)',
-                        stagger: { each: 0.025, from: 'start' }, ease: 'power2.out'
-                    });
-                });
-            }
-        });
-
-        // --- 7. Skills List Reveal (About Section) ---
-        if (skillItems.length > 0) {
-            to(skillItems, {
-                opacity: 1, y: 0, duration: 0.65, stagger: 0.08, ease: 'power2.out',
-                scrollTrigger: { trigger: '.skills-list', start: 'top 88%', toggleActions: 'play none none none'}
-            });
-        }
-
-        // --- 8. Project Cards Reveal & Hover ---
-        projectCards.forEach((card, index) => {
-            to(card, {
-                opacity: 1, y: 0, scale: 1, duration: 0.9, ease: 'expo.out',
-                scrollTrigger: { trigger: card, start: 'top 92%', toggleActions: 'play none none none'},
-                delay: index * 0.12
-            });
-        });
-
-        ScrollTrigger.defaults({ once: true });
-
-        utils.toArray('.about-content p, .contact-message').forEach(el => {
-            from(el, {
-                opacity: 0, y: "2rem", duration: 1.1, ease: 'power3.out',
-                scrollTrigger: { trigger: el, start: 'top 92%', toggleActions: 'play none none none' }
-            })
-        });
-
-        const contactLinksContainer = document.querySelector('.contact-links');
-        if (contactLinksContainer) {
-            const linksInContact = contactLinksContainer.querySelectorAll('a');
-            if (linksInContact.length > 0) {
-                from(linksInContact, {
-                    opacity: 0, y: "2rem", duration: 0.8, ease: 'power3.out', stagger: 0.2,
-                    scrollTrigger: {
-                        trigger: contactLinksContainer, start: 'top 85%',
-                        toggleActions: 'play none none none'
-                    }
-                });
-            }
-        }
-
-        // --- Background Blobs Click Interaction ---
-        if (svgBlobsContainer && blobs.length > 0) {
-            window.addEventListener('click', (e) => {
-                if (!svgBlobsContainer.contains(e.target) && e.target !== svgBlobsContainer && !e.target.classList.contains('blob')) {
-                }
-
-                const clickX = e.clientX;
-                const clickY = e.clientY;
-                const svgRect = svgBlobsContainer.getBoundingClientRect();
-                const clickXPercent = (clickX - svgRect.left) / svgRect.width * 100;
-                const clickYPercent = (clickY - svgRect.top) / svgRect.height * 100;
-
-
-                blobs.forEach(blob => {
-                    gsap.killTweensOf(blob); 
-
-                    const currentCX = parseFloat(gsap.getProperty(blob, "cx"));
-                    const currentCY = parseFloat(gsap.getProperty(blob, "cy"));
-                    const currentR_px = parseFloat(gsap.getProperty(blob, "r"));
-
-                    const dx = currentCX - clickXPercent;
-                    const dy = currentCY - clickYPercent;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance === 0) distance = 0.1; 
-
-                    const repulsion_distance_percent = 35; 
-
-                    const moveX = (dx / distance) * repulsion_distance_percent;
-                    const moveY = (dy / distance) * repulsion_distance_percent;
-
-                    let targetCX = currentCX + moveX;
-                    let targetCY = currentCY + moveY;
-                    
-                    const RpercentX = (currentR_px / svgRect.width) * 100;
-                    const RpercentY = (currentR_px / svgRect.height) * 100;
-                    targetCX = Math.max(RpercentX * 0.3, Math.min(100 - RpercentX * 0.3, targetCX));
-                    targetCY = Math.max(RpercentY * 0.3, Math.min(100 - RpercentY * 0.3, targetCY));
-
-                    to(blob, {
-                        duration: 0.5, 
-                        attr: {
-                            cx: `${targetCX}%`,
-                            cy: `${targetCY}%`
-                        },
-                        ease: 'circ.out', 
-                        onComplete: () => {
-                            to(blob, {
-                                duration: utils.random(1.0, 2.5), 
-                                attr: {
-                                    cx: `${utils.random(5, 95)}%`,
-                                    cy: `${utils.random(5, 95)}%`,
-                                },
-                                opacity: utils.random(0.6, 0.9),
-                                ease: 'sine.inOut',
-                                onComplete: () => {
-                                    originalAnimateBlob(blob);
-                                }
-                            });
-                        }
-                    });
-                });
-            });
-        }
-        
-        blobs.forEach(blob => originalAnimateBlob(blob));
-
-        // --- Smooth Scroll for Navigation Links ---
-        const navLinksForScroll = document.querySelectorAll('nav a[href^="#"]');
-        navLinksForScroll.forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-
-                if (targetElement) {
-                    let offsetYValue = 0;
-                    if (targetId !== '#hero') { 
-                        offsetYValue = 50; 
-                    }
-
-                    gsap.to(window, {
-                        duration: 1.2, 
-                        scrollTo: {
-                            y: targetElement,
-                            offsetY: offsetYValue
-                        },
-                        ease: 'power2.inOut' 
-                    });
-                }
-            });
-        });
-
-        let resizeTimeout;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                if (ScrollTrigger.isTouch !== 1) {
-                    ScrollTrigger.refresh();
-                }
-            }, 250);
-        });
-
-     
-        const currentYearSpan = document.getElementById('currentYear');
-        if (currentYearSpan) {
-            currentYearSpan.textContent = new Date().getFullYear();
-        }
+gsap.defaults({force3D:true});
+gsap.registerPlugin(ScrollTrigger,ScrollToPlugin);
+Splitting({target:"[data-splitting]",by:"chars"});
+const isTouchDevice='ontouchstart' in window||navigator.maxTouchPoints>0;
+if(isTouchDevice){document.body.style.cursor='auto'}
+const nameChars=document.querySelectorAll('.name .char');
+const titleLine=document.querySelector('.title-line');
+const titleChars=titleLine?titleLine.querySelectorAll('.char'):[];
+const navLinkElements=document.querySelectorAll('nav a');
+const sectionTitles=document.querySelectorAll('.section-title');
+const skillItems=document.querySelectorAll('.skills-list li');
+const projectCards=document.querySelectorAll('.project-card');
+const heroPhoto=document.querySelector('.hero-photo');
+const {to,from,set,utils,ticker}=gsap;
+if(!isTouchDevice){const cursorDot=document.querySelector('.cursor-dot');
+const cursorOutline=document.querySelector('.cursor-outline');
+const cursorText=document.querySelector('.cursor-text');
+cursorDot.style.display='block';
+cursorOutline.style.display='block';
+set(cursorDot,{xPercent:-50,yPercent:-50});
+set(cursorOutline,{xPercent:-50,yPercent:-50});
+let mouseX=0,mouseY=0;
+let outlineX=0,outlineY=0;
+const outlineEase=.08;
+window.addEventListener('mousemove',e=>{mouseX=e.clientX;
+mouseY=e.clientY});
+ticker.add(()=>{to(cursorDot,{duration:.2,x:mouseX,y:mouseY,ease:"power2.out"});
+outlineX+=(mouseX-outlineX)*outlineEase;
+outlineY+=(mouseY-outlineY)*outlineEase;
+set(cursorOutline,{x:outlineX,y:outlineY})});
+document.querySelectorAll('a, button, .project-card, .name .char, .title-line .char, .section-title .char, .skills-list li, nav a .char, .download-apk-button').forEach(el=>{el.addEventListener('mouseenter',()=>{cursorOutline.classList.add('hover-link');
+if(el.closest('.project-card'))cursorText.textContent='EXPLORE';
+else if(el.classList.contains('char')&&el.closest('nav a')||el.tagName==='A'&&el.closest('nav'))cursorText.textContent='NAV';
+else if(el.classList.contains('download-apk-button'))cursorText.textContent='GET';
+else if(el.closest('a'))cursorText.textContent='LINK';
+else if(el.classList.contains('skills-list')||el.parentElement.classList.contains('skills-list'))cursorText.textContent='SKILL';
+else cursorText.textContent='PLAY';
+let targetSize="3.125rem";
+if(el.closest('.name')||el.closest('.section-title')||el.tagName==='A'&&el.closest('nav')||el.classList.contains('char')&&el.closest('nav a')||el.closest('.title-line')){targetSize="3.75rem"}
+to(cursorOutline,{duration:.3,scale:1.3,opacity:1,width:targetSize,height:targetSize});
+to(cursorDot,{duration:.3,scale:.7})});
+el.addEventListener('mouseleave',()=>{cursorOutline.classList.remove('hover-link');
+cursorText.textContent='VIEW';
+to(cursorOutline,{duration:.3,scale:1,opacity:1,width:"2.5rem",height:"2.5rem"});
+to(cursorDot,{duration:.3,scale:1})})});
+const grid=document.querySelector('.background-grid');
+if(grid){window.addEventListener('mousemove',e=>{const xPercent=(e.clientX/window.innerWidth-.5)*2;
+const yPercent=(e.clientY/window.innerHeight-.5)*2;
+to(grid,{duration:1,backgroundPositionX:`${50+xPercent*10}%`,backgroundPositionY:`${50+yPercent*10}%`,ease:'power1.out'})})};
+const heroSection=document.getElementById('hero');
+if(heroSection&&nameChars.length>0){heroSection.addEventListener('mousemove',e=>{nameChars.forEach((char,i)=>{const rect=char.getBoundingClientRect();
+const heroRect=heroSection.getBoundingClientRect();
+const relMouseX=e.clientX-heroRect.left;
+const relMouseY=e.clientY-heroRect.top;
+const charCenterX=rect.left-heroRect.left+rect.width/2;
+const charCenterY=rect.top-heroRect.top+rect.height/2;
+const dx=charCenterX-relMouseX;
+const dy=charCenterY-relMouseY;
+const distance=Math.sqrt(dx*dx+dy*dy);
+const maxDist=170;
+if(distance<maxDist){const force=(maxDist-distance)/maxDist;
+const angle=Math.atan2(dy,dx);
+to(char,{x:Math.cos(angle)*force*22,y:Math.sin(angle)*force*22,scale:1+force*.15,rotation:Math.sin(distance/12+i/2.5)*force*10,duration:.38,ease:'power2.out',zIndex:1})}else{to(char,{x:0,y:0,scale:1,rotation:0,duration:.6,ease:'elastic.out(1, 0.45)',zIndex:0})}})});
+heroSection.addEventListener('mouseleave',()=>{to(nameChars,{x:0,y:0,scale:1,rotation:0,duration:.7,ease:'elastic.out(1, 0.4)',stagger:.015,zIndex:0})})};
+if(titleLine&&titleChars.length>0){titleLine.addEventListener('mousemove',e=>{titleChars.forEach((char,i)=>{const rect=char.getBoundingClientRect();
+const titleLineRect=titleLine.getBoundingClientRect();
+const relMouseX=e.clientX-titleLineRect.left;
+const relMouseY=e.clientY-titleLineRect.top;
+const charCenterX=rect.left-titleLineRect.left+rect.width/2;
+const charCenterY=rect.top-titleLineRect.top+rect.height/2;
+const dx=charCenterX-relMouseX;
+const dy=charCenterY-relMouseY;
+const distance=Math.sqrt(dx*dx+dy*dy);
+const maxDistTitle=120;
+if(distance<maxDistTitle){const force=(maxDistTitle-distance)/maxDistTitle;
+const angle=Math.atan2(dy,dx);
+to(char,{x:Math.cos(angle)*force*35,y:Math.sin(angle)*force*35,scale:1+force*.35,rotation:Math.sin(distance/(10+i*.5)+i/2)*force*20,duration:.3,ease:'power2.out',zIndex:1})}else{to(char,{x:0,y:0,scale:1,rotation:0,duration:.5,ease:'elastic.out(1, 0.5)',zIndex:0})}})});
+titleLine.addEventListener('mouseleave',()=>{to(titleChars,{x:0,y:0,scale:1,rotation:0,duration:.6,ease:'elastic.out(1, 0.45)',stagger:.01,zIndex:0})})};
+navLinkElements.forEach(navLink=>{const linkChars=navLink.querySelectorAll('.char');
+if(linkChars.length>0){navLink.addEventListener('mousemove',e=>{linkChars.forEach((char,i)=>{const rect=char.getBoundingClientRect();
+const linkRect=navLink.getBoundingClientRect();
+const relMouseX=e.clientX-linkRect.left;
+const relMouseY=e.clientY-linkRect.top;
+const charCenterX=rect.left-linkRect.left+rect.width/2;
+const charCenterY=rect.top-linkRect.top+rect.height/2;
+const dxToMouse=relMouseX-charCenterX;
+const dyToMouse=relMouseY-charCenterY;
+const distanceToMouse=Math.sqrt(dxToMouse*dxToMouse+dyToMouse*dyToMouse);
+const maxAttractionDist=100;
+if(distanceToMouse<maxAttractionDist){to(char,{x:dxToMouse*.55*(1-distanceToMouse/maxAttractionDist),y:dyToMouse*.55*(1-distanceToMouse/maxAttractionDist),rotation:Math.sin(distanceToMouse/12+i/2.8)*(1-distanceToMouse/maxAttractionDist)*25,duration:.2,ease:'power1.out',zIndex:distanceToMouse<rect.width*.75?2:1})}else{to(char,{x:0,y:0,rotation:0,duration:.45,ease:'elastic.out(1, 0.55)',zIndex:0})}})});
+navLink.addEventListener('mouseleave',()=>{to(linkChars,{x:0,y:0,rotation:0,duration:.55,ease:'elastic.out(1, 0.45)',stagger:.015,zIndex:0})})}});
+sectionTitles.forEach(title=>{const chars=title.querySelectorAll('.char');
+if(chars.length>0){title.addEventListener('mouseenter',()=>{to(chars,{duration:.45,x:()=>utils.random(-12,12),y:()=>utils.random(-6,6),rotation:()=>utils.random(-12,12),skewX:()=>utils.random(-18,18),color:()=>utils.random(['var(--accent-color-1)','var(--accent-color-2)','var(--accent-color-3)','var(--accent-color-4)']),stagger:{each:.025,from:'random'},ease:'circ.inOut'})});
+title.addEventListener('mouseleave',()=>{to(chars,{duration:.55,x:0,y:0,rotation:0,skewX:0,color:'var(--primary-text-color)',stagger:{each:.025,from:'start'},ease:'power2.out'})})}})}
+to('.background-grid',{opacity:1,duration:2,delay:.5});
+if(nameChars.length>0){from(nameChars,{duration:1.5,opacity:0,scale:.1,y:"random(-9rem, 9rem)",x:"random(-13rem, 13rem)",rotation:"random(-360, 360)",filter:'blur(0.375rem)',ease:'expo.out',stagger:{each:.03,from:'random'},delay:.8})}
+if(heroPhoto){from(heroPhoto,{opacity:0,scale:.6,rotation:15,x:"5rem",duration:1.3,ease:'expo.out',delay:2.4})}
+if(titleChars.length>0){from(titleChars,{duration:1,opacity:0,y:"3rem",rotationX:-90,transformOrigin:"50% 50% -1.25rem",ease:'back.out(1.4)',stagger:.04,delay:2.5})}
+sectionTitles.forEach(title=>{const chars=title.querySelectorAll('.char');
+if(chars.length>0){from(chars,{opacity:0,x:()=>utils.random("-3.5rem","3.5rem"),y:()=>utils.random("-3.5rem","3.5rem"),scale:()=>utils.random(.4,1.6),rotation:()=>utils.random(-100,100),filter:'blur(0.375rem)',duration:.9,ease:'power3.out',stagger:{amount:.35,from:'random'},scrollTrigger:{trigger:title,start:'top 88%',toggleActions:'play none none none'}})}});
+if(skillItems.length>0){to(skillItems,{opacity:1,y:0,duration:.65,stagger:.08,ease:'power2.out',scrollTrigger:{trigger:'.skills-list',start:'top 88%',toggleActions:'play none none none'}})}
+projectCards.forEach((card,index)=>{to(card,{opacity:1,y:0,scale:1,duration:.9,ease:'expo.out',scrollTrigger:{trigger:card,start:'top 92%',toggleActions:'play none none none'},delay:index*.12})});
+ScrollTrigger.defaults({once:true});
+utils.toArray('.about-content p, .contact-message').forEach(el=>{from(el,{opacity:0,y:"2rem",duration:1.1,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 92%',toggleActions:'play none none none'}})});
+const contactLinksContainer=document.querySelector('.contact-links');
+if(contactLinksContainer){from(contactLinksContainer.querySelectorAll('a'),{opacity:0,y:"2rem",duration:.8,ease:'power3.out',stagger:.2,scrollTrigger:{trigger:contactLinksContainer,start:'top 85%',toggleActions:'play none none none'}})}
+document.querySelectorAll('nav a[href^="#"]').forEach(link=>{link.addEventListener('click',function(e){e.preventDefault();
+const targetId=this.getAttribute('href');
+gsap.to(window,{duration:1.2,scrollTo:{y:targetId,offsetY:targetId==='#hero'?0:50},ease:'power2.inOut'})})});
+const currentYearSpan=document.getElementById('currentYear');
+if(currentYearSpan){currentYearSpan.textContent=(new Date).getFullYear()}
+const F2=.5*(Math.sqrt(3)-1);
+const G2=(3-Math.sqrt(3))/6;
+const F3=1/3;
+const G3=1/6;
+const perm=new Uint8Array([151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,88,237,149,56,87,174,20,125,136,171,168,68,175,74,165,71,134,139,48,27,166,77,146,158,231,83,111,229,122,60,211,133,230,220,105,92,41,55,46,245,40,244,102,143,54,65,25,63,161,1,216,80,73,209,76,132,187,208,89,18,169,200,196,135,130,116,188,159,86,164,100,109,198,173,186,3,64,52,217,226,250,124,123,5,202,38,147,118,126,255,82,85,212,207,206,59,227,47,16,58,17,182,189,28,42,223,183,170,213,119,248,152,2,44,154,163,70,221,153,101,155,167,43,172,9,129,22,39,253,19,98,108,110,79,113,224,232,178,185,112,104,218,246,97,228,251,34,242,193,238,210,144,12,191,179,162,241,81,51,145,235,249,14,239,107,49,192,214,31,181,199,106,157,184,84,204,176,115,121,50,45,127,4,150,254,138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180]);
+const p=new Uint8Array(512);
+for(let i=0;i<512;i++)p[i]=perm[i&255];
+function grad3(i,x,y,z){const h=i&15;
+const u=h<8?x:y;
+const v=h<4?y:h===12||h===14?x:z;
+return((h&1)===0?u:-u)+((h&2)===0?v:-v)}
+function noise(x,y){const s=(x+y)*F2;
+const i=Math.floor(x+s);
+const j=Math.floor(y+s);
+const t=(i+j)*G2;
+const X0=i-t;
+const Y0=j-t;
+const x0=x-X0;
+const y0=y-Y0;
+let i1,j1;
+if(x0>y0){i1=1;
+j1=0}
+else{i1=0;
+j1=1}
+const x1=x0-i1+G2;
+const y1=y0-j1+G2;
+const x2=x0-1+2*G2;
+const y2=y0-1+2*G2;
+const ii=i&255;
+const jj=j&255;
+const gi0=p[ii+p[jj]]%12;
+const gi1=p[ii+i1+p[jj+j1]]%12;
+const gi2=p[ii+1+p[jj+1]]%12;
+let t0=.5-x0*x0-y0*y0;
+let n0;
+if(t0<0)n0=0;
+else{t0*=t0;
+n0=t0*t0*grad3(gi0,x0,y0,0)}
+let t1=.5-x1*x1-y1*y1;
+let n1;
+if(t1<0)n1=0;
+else{t1*=t1;
+n1=t1*t1*grad3(gi1,x1,y1,0)}
+let t2=.5-x2*x2-y2*y2;
+let n2;
+if(t2<0)n2=0;
+else{t2*=t2;
+n2=t2*t2*grad3(gi2,x2,y2,0)}
+return 70*(n0+n1+n2)}
+const canvas=document.getElementById('glcanvas');
+const gl=canvas.getContext('webgl',{antialias:true,alpha:true});
+let shaderProgram,positionAttributeLocation,resolutionUniformLocation,timeUniformLocation,blobUniformLocations,positionBuffer;
+if(gl){const NUM_BLOBS=4;
+const blobs=[];
+function hexToRgb(hex){let r=0,g=0,b=0;
+if(hex.length==4){r="0x"+hex[1]+hex[1];
+g="0x"+hex[2]+hex[2];
+b="0x"+hex[3]+hex[3]}else if(hex.length==7){r="0x"+hex[1]+hex[2];
+g="0x"+hex[3]+hex[4];
+b="0x"+hex[5]+hex[6]}
+return[r/255,g/255,b/255]}
+function getCssVariable(varName){return getComputedStyle(document.documentElement).getPropertyValue(varName).trim()}
+const BLOB_COLORS=[hexToRgb(getCssVariable('--blob-color-magenta')),hexToRgb(getCssVariable('--blob-color-cyan')),hexToRgb(getCssVariable('--blob-color-lime')),hexToRgb(getCssVariable('--blob-color-orange'))];
+const vsSource=document.getElementById('vertex-shader').textContent;
+const fsSource=document.getElementById('fragment-shader').textContent;
+shaderProgram=createShaderProgram(gl,vsSource,fsSource);
+positionAttributeLocation=gl.getAttribLocation(shaderProgram,'a_position');
+resolutionUniformLocation=gl.getUniformLocation(shaderProgram,'u_resolution');
+timeUniformLocation=gl.getUniformLocation(shaderProgram,'u_time');
+blobUniformLocations=Array.from({length:NUM_BLOBS},(_,i)=>({center:gl.getUniformLocation(shaderProgram,`u_blobs[${i}].center`),radius:gl.getUniformLocation(shaderProgram,`u_blobs[${i}].radius`),color:gl.getUniformLocation(shaderProgram,`u_blobs[${i}].color`)}));
+positionBuffer=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+function setupBlobs(){resizeCanvas();
+window.addEventListener('click',onMouseClick);
+gl.enable(gl.BLEND);
+gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+for(let i=0;i<NUM_BLOBS;i++){const baseRadius=Math.random()*80+120;
+blobs.push({center:[Math.random()*canvas.width,Math.random()*canvas.height],baseRadius:baseRadius,radius:baseRadius,color:BLOB_COLORS[i%BLOB_COLORS.length],velocity:[(Math.random()-.5)*2,(Math.random()-.5)*2],noiseSeed:[Math.random()*1e3,Math.random()*1e3]})}
+requestAnimationFrame(animateBlobs)}
+let lastTime=0;
+function animateBlobs(time){const deltaTime=time-lastTime;
+lastTime=time;
+updateBlobs(time*.0001);
+drawScene(time*.001);
+requestAnimationFrame(animateBlobs)}
+function updateBlobs(time){const DAMPING=.98;
+const WANDER_STRENGTH=.03;
+const PULSE_STRENGTH=40;
+blobs.forEach(blob=>{blob.velocity[0]*=DAMPING;
+blob.velocity[1]*=DAMPING;
+const wanderX=noise(time*2+blob.noiseSeed[0]+100,time*2+blob.noiseSeed[1]);
+const wanderY=noise(time*2+blob.noiseSeed[0]+200,time*2+blob.noiseSeed[1]);
+blob.velocity[0]+=wanderX*WANDER_STRENGTH;
+blob.velocity[1]+=wanderY*WANDER_STRENGTH;
+blob.center[0]+=blob.velocity[0];
+blob.center[1]+=blob.velocity[1];
+if(blob.center[0]<0){blob.center[0]=0;
+blob.velocity[0]*=-1}else if(blob.center[0]>canvas.width){blob.center[0]=canvas.width;
+blob.velocity[0]*=-1}
+if(blob.center[1]<0){blob.center[1]=0;
+blob.velocity[1]*=-1}else if(blob.center[1]>canvas.height){blob.center[1]=canvas.height;
+blob.velocity[1]*=-1}
+const pulse=noise(time+blob.noiseSeed[0],time+blob.noiseSeed[1]);
+blob.radius=blob.baseRadius+pulse*PULSE_STRENGTH})}
+function onMouseClick(e){const rect=canvas.getBoundingClientRect();
+const clickPos=[e.clientX-rect.left,rect.height-(e.clientY-rect.top)];
+const CLICK_FORCE=40;
+blobs.forEach(blob=>{const dx=blob.center[0]-clickPos[0];
+const dy=blob.center[1]-clickPos[1];
+const distSq=dx*dx+dy*dy;
+if(distSq<blob.radius*blob.radius*5){const dist=Math.sqrt(distSq)||1;
+const directionX=dx/dist;
+const directionY=dy/dist;
+blob.velocity[0]=directionX*CLICK_FORCE;
+blob.velocity[1]=directionY*CLICK_FORCE}})}
+function drawScene(time){gl.viewport(0,0,gl.canvas.width,gl.canvas.height);
+gl.clearColor(0,0,0,0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+gl.useProgram(shaderProgram);
+gl.enableVertexAttribArray(positionAttributeLocation);
+gl.bindBuffer(gl.ARRAY_BUFFER,positionBuffer);
+gl.vertexAttribPointer(positionAttributeLocation,2,gl.FLOAT,false,0,0);
+gl.uniform2f(resolutionUniformLocation,gl.canvas.width,gl.canvas.height);
+gl.uniform1f(timeUniformLocation,time);
+for(let i=0;i<NUM_BLOBS;i++){const blob=blobs[i];
+gl.uniform2fv(blobUniformLocations[i].center,blob.center);
+gl.uniform1f(blobUniformLocations[i].radius,blob.radius);
+gl.uniform3fv(blobUniformLocations[i].color,blob.color)}
+gl.drawArrays(gl.TRIANGLES,0,6)}
+function createShaderProgram(gl,vsSource,fsSource){const p=gl.createProgram();
+[gl.VERTEX_SHADER,gl.FRAGMENT_SHADER].forEach((type,i)=>{const s=gl.createShader(type);
+gl.shaderSource(s,[vsSource,fsSource][i]);
+gl.compileShader(s);
+if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))return null;
+gl.attachShader(p,s)});
+gl.linkProgram(p);
+if(!gl.getProgramParameter(p,gl.LINK_STATUS))return null;
+return p}
+function resizeCanvas(){canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+if(gl&&shaderProgram){gl.useProgram(shaderProgram);
+gl.uniform2f(resolutionUniformLocation,canvas.width,canvas.height)}}
+setupBlobs()}
+let resizeTimeout;
+window.addEventListener('resize',()=>{clearTimeout(resizeTimeout);
+resizeTimeout=setTimeout(()=>{if(gl)resizeCanvas();
+ScrollTrigger.refresh()},250)});
     </script>
 </body>
 </html>
